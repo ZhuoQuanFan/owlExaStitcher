@@ -18,6 +18,13 @@
 
 namespace exa {
 
+  struct MacroCellGeom {
+    vec3i  dims;
+    vec3f  spacing;
+    vec3f  origin;
+    float *maxOpacities;
+  };
+
   struct GridTraversable {
     owl::vec3i dims;
     owl::box3f bounds;

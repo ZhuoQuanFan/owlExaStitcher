@@ -15,6 +15,7 @@
 // ======================================================================== //
 
 #include "ExaBrickSampler.h"
+#include <owl/helper/cuda.h>
 
 extern "C" char embedded_ExaBrickSampler[];
 
@@ -29,8 +30,10 @@ namespace exa {
 
     OWLVarDecl geomVars[]
     = {
-       { "abrBuffer",  OWL_BUFPTR, OWL_OFFSETOF(ExaBrickGeom,abrBuffer)},
        { "brickBuffer",  OWL_BUFPTR, OWL_OFFSETOF(ExaBrickGeom,brickBuffer)},
+       { "abrBuffer",  OWL_BUFPTR, OWL_OFFSETOF(ExaBrickGeom,abrBuffer)},
+       { "abrLeafListBuffer",  OWL_BUFPTR, OWL_OFFSETOF(ExaBrickGeom,abrLeafListBuffer)},
+       { "scalarBuffer",  OWL_BUFPTR, OWL_OFFSETOF(ExaBrickGeom,scalarBuffer)},
        { "maxOpacities",  OWL_BUFPTR, OWL_OFFSETOF(ExaBrickGeom,maxOpacities)},
        { nullptr /* sentinel to mark end of list */ }
     };
@@ -79,10 +82,11 @@ namespace exa {
       owlGeomTypeSetClosestHit   (abrGeomType, SAMPLING_RAY_TYPE, module, "ExaBrickGeomCH");
       OWLGeom abrGeom = owlGeomCreate(context, abrGeomType);
       owlGeomSetPrimCount(abrGeom, abrs.value.size());
-      owlGeomSetBuffer(abrGeom,"abrBuffer", abrBuffer);
       owlGeomSetBuffer(abrGeom,"brickBuffer", brickBuffer);
+      owlGeomSetBuffer(abrGeom,"abrBuffer", abrBuffer);
+      owlGeomSetBuffer(abrGeom,"abrLeafListBuffer",abrLeafListBuffer);
       owlGeomSetBuffer(abrGeom,"maxOpacities", abrMaxOpacities);
-
+      owlGeomSetBuffer(abrGeom,"scalarBuffer",scalarBuffer);
       owlBuildPrograms(context);
 
       abrBlas = owlUserGeomGroupCreate(context, 1, &abrGeom);
@@ -113,7 +117,7 @@ namespace exa {
       if (!brickMaxOpacities)
         brickMaxOpacities = owlDeviceBufferCreate(context, OWL_FLOAT, bricks.size(), nullptr);
       owlGeomSetBuffer(extGeom,"maxOpacities", brickMaxOpacities);
-
+      owlGeomSetBuffer(extGeom,"scalarBuffer",scalarBuffer);
       owlBuildPrograms(context);
 
       extBlas = owlUserGeomGroupCreate(context, 1, &extGeom);
@@ -142,7 +146,7 @@ namespace exa {
       if (!brickMaxOpacities)
         brickMaxOpacities = owlDeviceBufferCreate(context, OWL_FLOAT, bricks.size(), nullptr);
       owlGeomSetBuffer(brickGeom,"maxOpacities", brickMaxOpacities);
-
+      owlGeomSetBuffer(brickGeom,"scalarBuffer",scalarBuffer);
       owlBuildPrograms(context);
 
       brickBlas = owlUserGeomGroupCreate(context, 1, &brickGeom);
@@ -348,6 +352,11 @@ namespace exa {
       default: throw std::runtime_error("wrong traversal mode?!");
         break;
     }
+
+    OWL_CUDA_CHECK(cudaMemset(
+      (void*)owlBufferGetPointer(Sampler::maxOpacities,0), uint32_t(-1), 
+      owlBufferSizeInBytes(Sampler::maxOpacities))
+    );
   }
 
 } // ::exa

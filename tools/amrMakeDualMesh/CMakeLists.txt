@@ -14,6 +14,7 @@ add_executable(amrMakeDualMesh
 target_link_libraries(amrMakeDualMesh
   PUBLIC
   umesh
+  owl
   )
 
 # ==================================================================
@@ -24,7 +25,5 @@ add_executable(amrMakeGrids
 target_link_libraries(amrMakeGrids
   PUBLIC
   umesh
+  owl
   )
-
-
-

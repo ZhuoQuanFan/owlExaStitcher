@@ -15,11 +15,9 @@
 // ======================================================================== //
 
 #include <common.h>
-#include <LaunchParams.h> // TODO: still depends on renderer's laucnh params
+#include "../ExaBrickSampler.h"
 
 namespace exa {
-
-  extern "C" __constant__ LaunchParams optixLaunchParams;
 
   OPTIX_CLOSEST_HIT_PROGRAM(ExaBrickGeomCH)()
   {
@@ -85,11 +83,11 @@ namespace exa {
       auto& sample = owl::getPRD<BasisPRD>();
       float sumWeightedValues = 0.f;
       float sumWeights = 0.f;
-      const int *childList  = &optixLaunchParams.sampler.ebs.abrLeafListBuffer[abr.leafListBegin];
+      const int *childList  = &self.abrLeafListBuffer[abr.leafListBegin];
       const int  childCount = abr.leafListSize;
       for (int childID=0;childID<childCount;childID++) {
         const int brickID = childList[childID];
-        addBasisFunctions(optixLaunchParams.sampler.ebs,sumWeightedValues,sumWeights,brickID,ray.origin);
+        addBasisFunctions(self,sumWeightedValues,sumWeights,brickID,ray.origin);
       }
       sample.sumWeightedValues = sumWeightedValues;
       sample.sumWeights = sumWeights;
@@ -151,7 +149,7 @@ namespace exa {
       return;
 
     auto& sample = owl::getPRD<BasisPRD>();
-    addBasisFunctions(optixLaunchParams.sampler.ebs,sample.sumWeightedValues,sample.sumWeights,leafID,ray.origin);
+    addBasisFunctions(self,sample.sumWeightedValues,sample.sumWeights,leafID,ray.origin);
   }
 
   // ExaBricks //

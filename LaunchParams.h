@@ -46,13 +46,6 @@ namespace exa {
     float *maxOpacities;
   };
 
-  struct MacroCellGeom {
-    vec3i  dims;
-    vec3f  spacing;
-    vec3f  origin;
-    float *maxOpacities;
-  };
-
   struct LaunchParams {
     union {
       AMRCellSampler::LP   acs;

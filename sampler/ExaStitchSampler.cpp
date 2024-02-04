@@ -15,6 +15,7 @@
 // ======================================================================== //
 
 #include "ExaStitchSampler.h"
+#include <owl/helper/cuda.h>
 
 extern "C" char embedded_ExaStitchSampler[];
 
@@ -77,6 +78,10 @@ namespace exa {
       gridletMaxOpacities = owlDeviceBufferCreate(context, OWL_FLOAT,
                                                   model->gridlets.size(),
                                                   nullptr);
+      OWL_CUDA_CHECK(cudaMemset(
+            (void*)owlBufferGetPointer(gridletMaxOpacities,0), uint32_t(-1), 
+            owlBufferSizeInBytes(gridletMaxOpacities))
+      );
 
       gridletGeom.geomType = owlGeomTypeCreate(context,
                                                OWL_GEOM_USER,

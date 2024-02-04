@@ -22,8 +22,10 @@
 namespace exa {
   
   struct ExaBrickGeom {
-    ABR *abrBuffer;
     ExaBrick *brickBuffer;
+    ABR      *abrBuffer;
+    int      *abrLeafListBuffer;
+    float    *scalarBuffer;
     float *maxOpacities;
   };
 
@@ -36,11 +38,12 @@ namespace exa {
 
     // Launch params associated with sampler
     struct LP {
-      OptixTraversableHandle sampleBVH;
       ExaBrick *brickBuffer;
       ABR      *abrBuffer;
-      float    *scalarBuffer;
       int      *abrLeafListBuffer;
+      float    *scalarBuffer;
+
+      OptixTraversableHandle sampleBVH;
 #ifdef EXA_STITCH_MIRROR_EXAJET
       affine3f  mirrorInvTransform;
 #endif

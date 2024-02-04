@@ -19,7 +19,6 @@
 #include "sampler/ExaStitchSampler.h"
 #include "sampler/QuickClustersSampler.h"
 #include "common.h"
-#include "LaunchParams.h" // for MacroCellGeom (dependency should be removed eventually)
 #include "Grid.h"
 #include "Grid.cuh"
 #include "atomicOp.cuh"
