@@ -231,7 +231,7 @@ namespace umesh {
   
     size_t newID = output->vertices.size();
     output->vertices.push_back(v.pos);
-    output->vertexTag.push_back(v.scalarID);
+    output->vertexTags.push_back(v.scalarID);
     // output->perVertex->values.push_back(v.w);
   
     if (newID >= 0x7fffffffull) {

@@ -64,8 +64,8 @@ namespace exa {
       vertices.resize(mesh->vertices.size());
       for (size_t i=0; i<mesh->vertices.size(); ++i) {
         float value = 0.f;
-        if (!scalars.empty() && !mesh->vertexTag.empty())
-          value = scalars[mesh->vertexTag[i]];
+        if (!scalars.empty() && !mesh->vertexTags.empty())
+          value = scalars[mesh->vertexTags[i]];
         else if (!mesh->perVertex->values.empty())
           value = mesh->perVertex->values[i];
 
