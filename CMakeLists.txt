@@ -91,27 +91,34 @@ set(vsnray_dir ${PROJECT_SOURCE_DIR}/submodules/visionaray)
 include_directories(${vsnray_dir}/include)
 
 #--- options ----------------------------------------------
+set(EXA_DEFINITIONS)
+
 option(EXA_STITCH_MIRROR_EXAJET "Activate mirroring for exajet in kernels" OFF)
 if(EXA_STITCH_MIRROR_EXAJET)
   add_definitions(-DEXA_STITCH_MIRROR_EXAJET=1)
+  list(APPEND EXA_DEFINITIONS -DEXA_STITCH_MIRROR_EXAJET=1)
 endif()
 
 option(EXASTITCH_CUDA_TEXTURE_TF "Use CUDA texture for transfer function" ON)
 if(EXASTITCH_CUDA_TEXTURE_TF)
   add_definitions(-DEXASTITCH_CUDA_TEXTURE_TF=1)
+  list(APPEND EXA_DEFINITIONS -DEXASTITCH_CUDA_TEXTURE_TF=1)
 endif()
 
 set(EXA_STITCH_EXA_BRICK_SAMPLER_MODE 0 CACHE STRING "ABR-BVH: 0, ext.brick-BVH: 1")
 add_definitions(-DEXA_STITCH_EXA_BRICK_SAMPLER_MODE=${EXA_STITCH_EXA_BRICK_SAMPLER_MODE})
+list(APPEND EXA_DEFINITIONS -DEXA_STITCH_EXA_BRICK_SAMPLER_MODE=${EXA_STITCH_EXA_BRICK_SAMPLER_MODE})
 
 set(EXA_STITCH_EXA_BRICK_TRAVERSAL_MODE 0 CACHE STRING "ABR+optix: 0, grid+DDA: 1, grid+optix: 2, bricks+kdtree: 3, bricks+optix: 4, ext.brick+optix: 5")
 add_definitions(-DEXA_STITCH_EXA_BRICK_TRAVERSAL_MODE=${EXA_STITCH_EXA_BRICK_TRAVERSAL_MODE})
+list(APPEND EXA_DEFINITIONS -DEXA_STITCH_EXA_BRICK_TRAVERSAL_MODE=${EXA_STITCH_EXA_BRICK_TRAVERSAL_MODE})
 
 option(EXA_STITCH_SEPARATE_INDEX_BUFFERS_PER_UELEM
        "ExaStitch model/sampler use separate buffers per stitching/uelem type (otherwise we just have buffers for gridlets and general uelems"
        OFF)
 if(EXA_STITCH_SEPARATE_INDEX_BUFFERS_PER_UELEM)
   add_definitions(-DEXA_STITCH_SEPARATE_INDEX_BUFFERS_PER_UELEM=${EXA_STITCH_SEPARATE_INDEX_BUFFERS_PER_UELEM})
+  list(APPEND EXA_DEFINITIONS -DEXA_STITCH_SEPARATE_INDEX_BUFFERS_PER_UELEM=${EXA_STITCH_SEPARATE_INDEX_BUFFERS_PER_UELEM})
 endif()
 
 # ------------------------------------------------------------------
@@ -205,6 +212,8 @@ set_target_properties(witcher_core PROPERTIES POSITION_INDEPENDENT_CODE ON)
 if(BIGMESH_FOUND)
   target_link_libraries(witcher_core PRIVATE ${bigmesh_libraries})
 endif()
+
+target_compile_definitions(witcher_core PUBLIC ${EXA_DEFINITIONS})
 
 # ------------------------------------------------------------------
 # 
