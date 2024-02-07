@@ -166,6 +166,10 @@ namespace exa {
       umeshMaxOpacities[type] = owlDeviceBufferCreate(context, OWL_FLOAT,
                                                       indices[type]->size()/indexCount[type],
                                                       nullptr);
+      OWL_CUDA_CHECK(cudaMemset(
+            (void*)owlBufferGetPointer(umeshMaxOpacities[type],0), uint32_t(-1),
+            owlBufferSizeInBytes(umeshMaxOpacities[type]))
+      );
 
       stitchGeom[type].geomType = owlGeomTypeCreate(context,
                                                     OWL_GEOM_USER,
@@ -202,6 +206,10 @@ namespace exa {
       umeshMaxOpacities = owlDeviceBufferCreate(context, OWL_FLOAT,
                                                 indices.size()/8,
                                                 nullptr);
+      OWL_CUDA_CHECK(cudaMemset(
+            (void*)owlBufferGetPointer(umeshMaxOpacities,0), uint32_t(-1),
+            owlBufferSizeInBytes(umeshMaxOpacities))
+      );
 
       stitchGeom.geomType = owlGeomTypeCreate(context,
                                               OWL_GEOM_USER,
