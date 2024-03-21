@@ -73,6 +73,10 @@ namespace exa {
       abrBuffer         = owlDeviceBufferCreate(context, OWL_USER_TYPE(ABR), abrs.value.size(), abrs.value.data());
       abrLeafListBuffer = owlDeviceBufferCreate(context, OWL_INT, abrs.leafList.size(), abrs.leafList.data());
       abrMaxOpacities   = owlDeviceBufferCreate(context, OWL_FLOAT, abrs.value.size(), nullptr);
+      OWL_CUDA_CHECK(cudaMemset(
+        (void*)owlBufferGetPointer(abrMaxOpacities,0), uint32_t(-1), 
+              owlBufferSizeInBytes(abrMaxOpacities))
+      );
 
       abrGeomType = owlGeomTypeCreate(context, OWL_GEOM_USER, sizeof(ExaBrickGeom), geomVars, -1);
       owlGeomTypeSetBoundsProg   (abrGeomType, module, "ExaBrickABRGeomBounds");
@@ -114,8 +118,13 @@ namespace exa {
       OWLGeom extGeom = owlGeomCreate(context, extGeomType);
       owlGeomSetPrimCount(extGeom, bricks.size());
       owlGeomSetBuffer(extGeom,"brickBuffer", brickBuffer);
-      if (!brickMaxOpacities)
+      if (!brickMaxOpacities) {
         brickMaxOpacities = owlDeviceBufferCreate(context, OWL_FLOAT, bricks.size(), nullptr);
+        OWL_CUDA_CHECK(cudaMemset(
+          (void*)owlBufferGetPointer(brickMaxOpacities,0), uint32_t(-1), 
+                owlBufferSizeInBytes(brickMaxOpacities))
+        );
+      }
       owlGeomSetBuffer(extGeom,"maxOpacities", brickMaxOpacities);
       owlGeomSetBuffer(extGeom,"scalarBuffer",scalarBuffer);
       owlBuildPrograms(context);
@@ -143,8 +152,13 @@ namespace exa {
       OWLGeom brickGeom = owlGeomCreate(context, brickGeomType);
       owlGeomSetPrimCount(brickGeom, bricks.size());
       owlGeomSetBuffer(brickGeom,"brickBuffer", brickBuffer);
-      if (!brickMaxOpacities)
+      if (!brickMaxOpacities) {
         brickMaxOpacities = owlDeviceBufferCreate(context, OWL_FLOAT, bricks.size(), nullptr);
+        OWL_CUDA_CHECK(cudaMemset(
+          (void*)owlBufferGetPointer(brickMaxOpacities,0), uint32_t(-1), 
+                owlBufferSizeInBytes(brickMaxOpacities))
+        );
+      }
       owlGeomSetBuffer(brickGeom,"maxOpacities", brickMaxOpacities);
       owlGeomSetBuffer(brickGeom,"scalarBuffer",scalarBuffer);
       owlBuildPrograms(context);
@@ -166,8 +180,13 @@ namespace exa {
       if (!kdtree)
         return false;
 
-      if (!brickMaxOpacities)
+      if (!brickMaxOpacities) {
         brickMaxOpacities = owlDeviceBufferCreate(context, OWL_FLOAT, bricks.size(), nullptr);
+        OWL_CUDA_CHECK(cudaMemset(
+          (void*)owlBufferGetPointer(brickMaxOpacities,0), uint32_t(-1), 
+                owlBufferSizeInBytes(brickMaxOpacities))
+        );
+      }
 
       kdtree->initGPU();
 #ifdef EXA_STITCH_MIRROR_EXAJET
