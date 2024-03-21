@@ -205,8 +205,11 @@ namespace exa {
                 const SpatialDomain &domain,
                 vec3f pos)
   {
+
 #if EXA_STITCH_EXA_BRICK_TRAVERSAL_MODE == EXABRICK_ABR_TRAVERSAL && \
     EXA_STITCH_EXA_BRICK_SAMPLER_MODE == EXA_BRICK_SAMPLER_ABR_BVH
+    if (domain.domainID != -1) {
+
     const ABR &abr = lp.abrBuffer[domain.domainID];
 
 #ifdef EXA_STITCH_MIRROR_EXAJET
@@ -224,7 +227,11 @@ namespace exa {
     }
 
     return {0,-1,sumWeightedValues/sumWeights};
-#else
+
+    }
+#endif
+
+    // Fallback Path
     SamplingRay ray;
     ray.origin = pos;
     ray.direction = vec3f(1.f);
@@ -237,7 +244,6 @@ namespace exa {
 
     if (sample.sumWeights <= 0) return {0,0,0.f};
     return {0,-1,sample.sumWeightedValues/sample.sumWeights};
-#endif
   }
 #endif
 

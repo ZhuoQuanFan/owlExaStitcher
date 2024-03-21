@@ -80,7 +80,7 @@ namespace exa {
     /* range in ray space */
     float t0, t1;
     /* ID of the domain; not always set to sth. useful */
-    int domainID;
+    int domainID=-1;
   };
 
 #ifdef __CUDA_ARCH__
