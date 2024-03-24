@@ -2,14 +2,23 @@ project(exa-stitch LANGUAGES C CXX CUDA)
 
 cmake_minimum_required(VERSION 3.1.3)
 
-if(PYTHON_GLIBCXX_USE_CXX11_ABI STREQUAL "True")
-  add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
-else()
-  add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+if(DEFINED PYTHON_GLIBCXX_USE_CXX11_ABI)
+  if(PYTHON_GLIBCXX_USE_CXX11_ABI STREQUAL "True")
+    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
+  else()
+    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+  endif()
 endif()
+
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  set(IS_STANDALONE_PROJECT 1)
+set(IS_STANDALONE_PROJECT 0)
 endif()
+
+option(EXA_STANDALONE_PROJECT "Is this a standalone project?" ON)
+if(NOT EXA_STANDALONE_PROJECT)
+  set(IS_STANDALONE_PROJECT 0)
+endif()
+
 message(STATUS "IS_STANDALONE_PROJECT: ${IS_STANDALONE_PROJECT}")
 
 set(CMAKE_CXX_STANDARD 14)
